@@ -1,21 +1,26 @@
-import { useState } from "react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Select } from "./ui/select";
-
+import { useState } from 'react'
+import { Input } from '@ui/Input'
+import { Select } from '@ui/Select'
+import { Button } from '@ui/Button'
 
 function TransactionForm({ onAdd }) {
-  const [type, setType] = useState("entrada");
-  const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState("");
-  const [date, setDate] = useState("");
+  const [type, setType] = useState('entrada')
+  const [description, setDescription] = useState('')
+  const [amount, setAmount] = useState('')
+  const [date, setDate] = useState('')
+  const [error, setError] = useState('')
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!description || !amount || !date) {
-      alert("Preencha todos os campos!");
-      return;
+      setError('Preencha todos os campos.')
+      return
+    }
+
+    if (parseFloat(amount) <= 0) {
+      setError('O valor deve ser maior que zero.')
+      return
     }
 
     const newTransaction = {
@@ -24,25 +29,27 @@ function TransactionForm({ onAdd }) {
       description,
       amount: parseFloat(amount),
       date,
-    };
+    }
 
-    onAdd(newTransaction);
+    onAdd(newTransaction)
 
-    // Resetar o formulário
-    setType("entrada");
-    setDescription("");
-    setAmount("");
-    setDate("");
-  };
+    // Limpar
+    setDescription('')
+    setAmount('')
+    setDate('')
+    setError('')
+  }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-4 rounded-lg shadow-md mb-4"
+      className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-6"
     >
-      <h3 className="text-lg font-semibold mb-2">Adicionar Transação</h3>
+      <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">
+        Adicionar Transação
+      </h3>
 
-      <div className="flex flex-col gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Select value={type} onChange={(e) => setType(e.target.value)}>
           <option value="entrada">Entrada</option>
           <option value="saida">Saída</option>
@@ -53,13 +60,16 @@ function TransactionForm({ onAdd }) {
           placeholder="Descrição"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          maxLength={40}
         />
 
         <Input
           type="number"
-          placeholder="Valor (R$)"
+          placeholder="Valor (ex: 100.00)"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
+          min="0.01"
+          step="0.01"
         />
 
         <Input
@@ -67,13 +77,15 @@ function TransactionForm({ onAdd }) {
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-
-        <Button type="submit" className="mt-2">
-          Adicionar
-        </Button>
       </div>
+
+      {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+
+      <Button type="submit" className="mt-4">
+        Adicionar
+      </Button>
     </form>
-  );
+  )
 }
 
-export default TransactionForm;
+export default TransactionForm
