@@ -1,10 +1,17 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App.jsx';
+import { ThemeProvider } from '@emotion/react';
+import { CssBaseline } from '@mui/material';
+import theme from './theme.js';
 
-createRoot(document.getElementById('root')).render(
+const rootElement = document.getElementById('root');
+const root = createRoot(rootElement);
+root.render(
   <StrictMode>
-    <App />
-  </StrictMode>,
-)
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <App />
+    </ThemeProvider>
+  </StrictMode>
+);
